@@ -1,47 +1,3 @@
-// import { Blog } from "../hooks"
-// import { Appbar } from "./Appbar"
-// import { Avatar } from "./BlogCard"
-// export const FullBlog = ({ blog }: { blog: Blog }) => {
-//     return (
-//         <div>
-//             <Appbar />
-//             <div className="flex justify-center">
-//                 <div className="grid grid-cols-12 gap-6 px-4 sm:px-10 w-full pt-12 max-w-screen-xl">
-//                     <div className="col-span-12 md:col-span-8">
-//                         <div className="text-3xl sm:text-5xl font-extrabold">
-//                             {blog.title}
-//                         </div>
-//                         <div className="text-slate-500 pt-2 text-sm sm:text-base">
-//                             Posted on 2nd December 2023
-//                         </div>
-//                         <div className="pt-4 text-base sm:text-lg">
-//                             {blog.content}
-//                         </div>
-//                     </div>
-//                     <div className="col-span-12 md:col-span-4">
-//                         <div className="text-slate-600 text-lg">
-//                             Author
-//                         </div>
-//                         <div className="flex w-full pt-4 md:pt-0">
-//                             <div className="pr-4 flex flex-col justify-center">
-//                                 <Avatar size="big" name={blog.author.name || "Anonymous"} />
-//                             </div>
-//                             <div>
-//                                 <div className="text-lg sm:text-xl font-bold">
-//                                     {blog.author.name || "Anonymous"}
-//                                 </div>
-//                                 <div className="pt-2 text-slate-500 text-sm sm:text-base">
-//                                     Random catch phrase about the author's ability to grab the user's attention
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// };
-
 
 import axios from "axios";
 import { BACKEND_URL } from "../config";
@@ -86,8 +42,10 @@ export const FullBlog = ({ blog, isAuthor }: { blog: Blog, isAuthor: boolean }) 
                 }) : 'Not Published'}
                         </div>
                         <div className="pt-4 text-base sm:text-lg">
-                            {blog.content}
-                        </div>
+                {blog.content.split('\n').map((paragraph, idx) => (
+                <p key={idx}>{paragraph}</p>
+                 ))}
+                </div>
                         {isAuthor && (
                             <div className="pt-4">
                             <button 
@@ -129,3 +87,4 @@ export const FullBlog = ({ blog, isAuthor }: { blog: Blog, isAuthor: boolean }) 
         </div>
     );
 };
+
