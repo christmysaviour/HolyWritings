@@ -1,7 +1,7 @@
-import {Hono} from "hono"
-import {PrismaClient} from '@prisma/client/edge'
+import { Hono } from "hono";
+import { PrismaClient } from '@prisma/client/edge';
 import { withAccelerate } from '@prisma/extension-accelerate';
-import { decode, sign, verify } from 'hono/jwt';
+import { sign } from 'hono/jwt';
 import { signupInput, signinInput } from "@christoursaviour/medium-commo";
 import { jwt } from 'hono/jwt';
 
@@ -12,7 +12,7 @@ export const userRouter = new Hono<{
   }
 }>();
 
-// Signup
+
 userRouter.post('/signup', async (c) => {
   const body = await c.req.json();
   const { success } = signupInput.safeParse(body);
@@ -24,7 +24,6 @@ userRouter.post('/signup', async (c) => {
   const prisma = new PrismaClient({ datasourceUrl: c.env.DATABASE_URL }).$extends(withAccelerate());
 
   try {
-
     const user = await prisma.user.create({
       data: {
         email: body.email,
@@ -32,6 +31,17 @@ userRouter.post('/signup', async (c) => {
         name: body.name
       }
     });
+
+
+    const existingSession = await prisma.session.findFirst({
+      where: { userId: user.id },
+    });
+
+    if (existingSession) {
+      await prisma.session.delete({
+        where: { id: existingSession.id },
+      });
+    }
 
     const sessionToken = await sign({ id: user.id }, c.env.JWT_SECRET);
 
@@ -55,7 +65,7 @@ userRouter.post('/signup', async (c) => {
   }
 });
 
-// Signin
+
 userRouter.post('/signin', async (c) => {
   const body = await c.req.json();
   const { success } = signinInput.safeParse(body);
@@ -73,6 +83,17 @@ userRouter.post('/signin', async (c) => {
     if (!user) {
       c.status(403);
       return c.json({ message: "Incorrect credentials" });
+    }
+
+   
+    const existingSession = await prisma.session.findFirst({
+      where: { userId: user.id },
+    });
+
+    if (existingSession) {
+      await prisma.session.delete({
+        where: { id: existingSession.id },
+      });
     }
 
     const sessionToken = await sign({ id: user.id }, c.env.JWT_SECRET);
@@ -98,11 +119,12 @@ userRouter.post('/signin', async (c) => {
   }
 });
 
+// Signout
 userRouter.post('/signout', async (c) => {
   const prisma = new PrismaClient({ datasourceUrl: c.env.DATABASE_URL }).$extends(withAccelerate());
 
   try {
-    const token = c.req.header('Token')?.split(' ')[1];
+    const token = c.req.header('Authorization')?.split(' ')[1];
     console.log('Received token:', token);
 
     if (!token) {
