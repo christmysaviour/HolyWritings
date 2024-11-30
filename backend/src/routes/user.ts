@@ -124,7 +124,7 @@ userRouter.post('/signout', async (c) => {
   const prisma = new PrismaClient({ datasourceUrl: c.env.DATABASE_URL }).$extends(withAccelerate());
 
   try {
-    const token = c.req.header('Authorization');
+    const token = c.req.header('Token')?.split(' ')[1];
     console.log('Received token:', token);
 
     if (!token) {
