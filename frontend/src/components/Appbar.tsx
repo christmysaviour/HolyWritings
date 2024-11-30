@@ -31,8 +31,8 @@ export const Appbar = () => {
             setIsAuthenticated(false); // Update the authentication status
             navigate('/signup');
         } catch (error) {
-            console.error('Signout error:', error);
-            alert('Error while signing out');
+             console.error('Signout error:', error.response ? error.response.data : error.message);
+             alert('Error while signing out');
         }
     };
 
