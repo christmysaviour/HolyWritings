@@ -16,19 +16,19 @@ export const Appbar = () => {
 
     const handleSignOut = async () => {
         try {
-            // const token = localStorage.getItem('sessionToken');
-            // if (!token) {
-            //     alert('No token found');
-            //     return;
-            // }
-            // console.log('Sending signout request with token:', token);
-            // const response = await axios.post(`${BACKEND_URL}/api/v1/user/signout`, {}, {
-            //     headers: { Token: `Bearer ${token}` }
-            // });
-            // console.log('Signout response:', response.data);
-            // localStorage.removeItem('jwtToken');
-            // localStorage.removeItem('sessionToken');
-            // setIsAuthenticated(false); // Update the authentication status
+            const token = localStorage.getItem('sessionToken');
+            if (!token) {
+                alert('No token found');
+                return;
+            }
+            console.log('Sending signout request with token:', token);
+            const response = await axios.post(`${BACKEND_URL}/api/v1/user/signout`, {}, {
+                headers: { Token: `Bearer ${token}` }
+            });
+            console.log('Signout response:', response.data);
+            localStorage.removeItem('jwtToken');
+            localStorage.removeItem('sessionToken');
+            setIsAuthenticated(false);
             navigate('/signin');
         } catch (error) {
             console.error('Signout error:', error);
