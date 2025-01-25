@@ -17,8 +17,8 @@ export const blogRouter = new Hono<{
   
   // Middleware for JWT authentication
   blogRouter.use("/*", async (c, next) => {
-    const authHeader = c.req.header("Authorization") || "";
-    // const authHeader = c.req.header('Token')?.split(' ')[1]||"";
+    // const authHeader = c.req.header("Authorization") || "";
+    const authHeader = c.req.header('Token')?.split(' ')[1]||"";
     try {
       const user = await verify(authHeader, c.env.JWT_SECRET);
       if (user) {
